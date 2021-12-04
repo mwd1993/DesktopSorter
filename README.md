@@ -11,3 +11,8 @@ DesktopSorter.exe "compress"
 DesktopSorter.exe "decompress"
 ```  
 (this extracts all of your compressed items back to the desktop)
+
+# Known Issues:  
+```
+1. Shortcuts aren't being moved to the compression path, needs further looking into.
+```
