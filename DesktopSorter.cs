@@ -45,7 +45,6 @@ namespace DesktopSorter
             Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter");
             string[] files = Directory.GetFiles(Sorter.desktopPath);
             List<string> folders = new List<string>();
-            Console.WriteLine("files length: " + files.Length);
             foreach(var f in files)
             {
                 string ext = Path.GetExtension(f).Replace(".", "").Trim();
