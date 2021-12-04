@@ -1,7 +1,7 @@
 # DesktopSorter
 C# Application, when ran, sorts your Desktop files by their extension name, into their own folders, in a folder named DesktopSorter  
 
-## Compile yourself, or Download from Releases & Run from CMD Line:  
+## Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) & Run from CMD Line:  
   
 #### (this sorts all of your desktop items)
 ```
