@@ -62,6 +62,7 @@ namespace DesktopSorter
                     if(Path.GetExtension(f).Replace(".", "").Trim() == _f)
                     {
                         File.Move(f, Sorter.desktopPath + "/DesktopSorter/" + _f + "/" + Path.GetFileName(f));
+                        break;
                     }
                 }
             }
