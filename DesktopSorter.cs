@@ -203,6 +203,30 @@ namespace DesktopSorter
             }
             #endregion
 
+            if (Directory.Exists(Sorter.desktopPath + "/_PublicDesktop/"))
+            {
+                // Just to make sure..
+                if (Directory.Exists(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/"))
+                {
+                    string[] pd_folders = Directory.GetDirectories(Sorter.desktopPath + "/_PublicDesktop/");
+                    bool pd_fail = false;
+                    foreach(var pd_f in pd_folders)
+                    {
+                        try
+                        {
+                            Directory.Move(pd_f, Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/" + Path.GetFileName(pd_f));
+                        }
+                        catch
+                        {
+                            pd_fail = true;
+                            break;
+                        }
+                    }
+                    if (!pd_fail && pd_folders.Length > 0)
+                        Directory.Delete(Sorter.desktopPath + "/_PublicDesktop");
+                }
+            }
+
             List<string> files_return = new List<string>(files);
             files_return.AddRange(files2);
             return files_return;
