@@ -15,7 +15,7 @@ DesktopSorter.exe "decompress"
 
 # Known Issues:  
 ```
-1. Shortcuts (.lnk) aren't being moved to the compression path, needs further looking into.
+1. Shortcuts or some other weird extension type, is not being moved to the compression path, needs further looking into.
 ```
 
 # Image Example:
