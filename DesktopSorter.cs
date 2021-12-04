@@ -8,19 +8,24 @@ namespace DesktopSorter
     {
         public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string desktopPublicPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
+        public static List<string> ignoreExtensions = new List<string>();
         public static List<string> ignoreFiles = new List<string>()
         {
             "desktopsorter.exe",
             "desktop.ini"
         };
-        public static List<string> ignoreExtensions = new List<string>();
+    
         public static void Main(string[] args)
         {
             if(args.Length >= 1)
             {
+                // Extensions to ignore
+                // were provided by the user
                 if (args.Length >= 2)
                 {
                     string ignoreExt = args[1];
+                    // Split by the seperator "," and
+                    // store each extension to a list
                     List<string> ignore = new List<string>(ignoreExt.Split(","));
                     Sorter.ignoreExtensions = ignore;
                 }
@@ -50,13 +55,25 @@ namespace DesktopSorter
             try
             {
                 string[] p_directories = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop");
+                // Loop through each directory inside of 
+                // our DesktopSorter/_PublicDesktop Folder
                 foreach (var dir in p_directories)
                 {
                     string[] files = Directory.GetFiles(dir + "/");
+                    // Loop through each file in
+                    // the current indexed directory
                     foreach (var f in files)
                     {
                         if (ignoreFiles.Contains(Path.GetFileName(f).ToLower()))
                             continue;
+
+                        // This try attempt will fail if the user
+                        // isn't running CMD as admin and then calling
+                        // this program via the terminal. If they
+                        // aren't running CMD as admin, we can not
+                        // move Files 'back' to User/Public/Desktop <- protected
+                        // but can move them 'from' that location with
+                        // no problem, weirdly enough..
                         try
                         {
                             File.Move(f, Sorter.desktopPublicPath + "/" + Path.GetFileName(f));
@@ -78,7 +95,7 @@ namespace DesktopSorter
             }
             catch
             {
-                Console.WriteLine("No such directory for _PublicDesktop, ignoring exectution logic.");
+                Console.WriteLine("No such directory for _PublicDesktop, ignoring execution logic.");
             }
             #endregion
 
@@ -87,10 +104,13 @@ namespace DesktopSorter
             try
             {
                 string[] directories = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/");
-
+                // Loop through each directory inside of 
+                // our DesktopSorter/_PublicDesktop Folder
                 foreach (var dir in directories)
                 {
                     string[] files = Directory.GetFiles(dir + "/");
+                    // Loop through each file in
+                    // the current indexed directory
                     foreach (var f in files)
                     {
                         if (Path.GetFileName(f).Contains("DesktopSorter"))
@@ -99,6 +119,12 @@ namespace DesktopSorter
                         filesDecompressed.Add(f);
                     }
                 }
+                // If user isn't running CMD as admin
+                // then we'll move files back to the 
+                // normal desktop, in a folder named:
+                // _PublicDesktop. These were files
+                // stored on the users Public Desktop 
+                // Directory, which requires Admin Access
                 if (publicAccessError)
                     Directory.Move(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/", Sorter.desktopPath + "/_PublicDesktop/");
                 Directory.Delete(Sorter.desktopPath + "/DesktopSorter/", true);
@@ -106,7 +132,7 @@ namespace DesktopSorter
             }
             catch
             {
-                Console.WriteLine("No such directory for DesktopSorter, ignoring exectution logic.");
+                Console.WriteLine("No such directory for DesktopSorter, ignoring execution logic.");
             }
             #endregion
 
