@@ -14,11 +14,17 @@ namespace DesktopSorter
                 switch(args[0].ToLower())
                 {
                     case "compress":
-                        Sorter.compressFiles();
-                        break;
+                        {
+                            List<string> files = Sorter.compressFiles();
+                            Console.WriteLine("Compressed " + files.Count + " files");
+                            break;
+                        }
                     case "decompress":
-                        Sorter.decompressFiles();
-                        break;
+                        {
+                            List<string> files = Sorter.decompressFiles();
+                            Console.WriteLine("Decompressed " + files.Count + " files");
+                            break;
+                        }
                 }
             }
         }
@@ -32,6 +38,8 @@ namespace DesktopSorter
                 string[] files = Directory.GetFiles(dir + "/");
                 foreach(var f in files)
                 {
+                    if (Path.GetFileName(f).Contains("DesktopSorter"))
+                        continue;
                     File.Move(f, Sorter.desktopPath + "/" + Path.GetFileName(f));
                     filesDecompressed.Add(f);
                 }
@@ -47,6 +55,8 @@ namespace DesktopSorter
             List<string> folders = new List<string>();
             foreach(var f in files)
             {
+                if (Path.GetFileName(f).Contains("DesktopSorter"))
+                    continue;
                 string ext = Path.GetExtension(f).Replace(".", "").Trim();
                 if (!folders.Contains(ext))
                     folders.Add(ext);
