@@ -7,10 +7,23 @@ namespace DesktopSorter
     class Sorter
     {
         public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        public static string desktopPublicPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
+        public static List<string> ignoreFiles = new List<string>()
+        {
+            "desktopsorter.exe",
+            "desktop.ini"
+        };
+        public static List<string> ignoreExtensions = new List<string>();
         public static void Main(string[] args)
         {
             if(args.Length >= 1)
             {
+                if (args.Length >= 2)
+                {
+                    string ignoreExt = args[1];
+                    List<string> ignore = new List<string>(ignoreExt.Split(","));
+                    Sorter.ignoreExtensions = ignore;
+                }
                 switch(args[0].ToLower())
                 {
                     case "compress":
@@ -31,43 +44,111 @@ namespace DesktopSorter
 
         public static List<string> decompressFiles()
         {
-            string[] directories = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/");
-            List<string> filesDecompressed = new List<string>(){ };
-            foreach(var dir in directories)
+            #region Public Desktop Decompression Logic
+            bool publicAccessError = false;
+            List<string> p_filesDecompressed = new List<string>() { };
+            try
             {
-                string[] files = Directory.GetFiles(dir + "/");
-                foreach(var f in files)
+                string[] p_directories = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop");
+                foreach (var dir in p_directories)
                 {
-                    if (Path.GetFileName(f).Contains("DesktopSorter"))
-                        continue;
-                    File.Move(f, Sorter.desktopPath + "/" + Path.GetFileName(f));
-                    filesDecompressed.Add(f);
+                    string[] files = Directory.GetFiles(dir + "/");
+                    foreach (var f in files)
+                    {
+                        if (ignoreFiles.Contains(Path.GetFileName(f).ToLower()))
+                            continue;
+                        try
+                        {
+                            File.Move(f, Sorter.desktopPublicPath + "/" + Path.GetFileName(f));
+                            p_filesDecompressed.Add(f);
+                        }
+                        catch
+                        {
+                            Console.WriteLine("############################################################################################\\n");
+                            Console.WriteLine("You should run CMD as admin, as there are some files\nthat are in the Public Desktop location, which requires admin rights to move it back.\n");
+                            Console.WriteLine("The files have been moved to a Folder on your Desktop named,\n\"_PublicDesktop\", since they are essentially stuck in limbo.\n");
+                            Console.WriteLine("############################################################################################\\n");
+                            publicAccessError = true;
+                        }
+                        break;
+                    }
+                    if (publicAccessError)
+                        break;
                 }
             }
-            Directory.Delete(Sorter.desktopPath + "/DesktopSorter/",true);
+            catch
+            {
+                Console.WriteLine("No such directory for _PublicDesktop, ignoring exectution logic.");
+            }
+            #endregion
+
+            #region User Desktop Decompression Logic
+            List<string> filesDecompressed = new List<string>() { };
+            try
+            {
+                string[] directories = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/");
+
+                foreach (var dir in directories)
+                {
+                    string[] files = Directory.GetFiles(dir + "/");
+                    foreach (var f in files)
+                    {
+                        if (Path.GetFileName(f).Contains("DesktopSorter"))
+                            continue;
+                        File.Move(f, Sorter.desktopPath + "/" + Path.GetFileName(f));
+                        filesDecompressed.Add(f);
+                    }
+                }
+                if (publicAccessError)
+                    Directory.Move(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/", Sorter.desktopPath + "/_PublicDesktop/");
+                Directory.Delete(Sorter.desktopPath + "/DesktopSorter/", true);
+                filesDecompressed.AddRange(p_filesDecompressed);
+            }
+            catch
+            {
+                Console.WriteLine("No such directory for DesktopSorter, ignoring exectution logic.");
+            }
+            #endregion
+
+            filesDecompressed.AddRange(p_filesDecompressed);
             return filesDecompressed;
         }
 
         public static List<string> compressFiles()
         {
             Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter");
+            Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop");
             string[] files = Directory.GetFiles(Sorter.desktopPath);
             List<string> folders = new List<string>();
-            foreach(var f in files)
+
+            #region User Desktop Compression Logic
+            // Loop through all files on the Desktop
+            // And append their extension to a list 
+            // (if not on the list already)
+            foreach (var f in files)
             {
-                if (Path.GetFileName(f).Contains("DesktopSorter"))
+                if (Sorter.ignoreFiles.Contains(Path.GetFileName(f).ToLower()) || Sorter.ignoreExtensions.Contains(Path.GetExtension(f).ToLower()))
                     continue;
                 string ext = Path.GetExtension(f).Replace(".", "").Trim();
                 if (!folders.Contains(ext))
                     folders.Add(ext);
             }
+            // Create each extension directory 
+            // inside of our DesktopSorter folder
             foreach(var f in folders)
             {
                 Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter/" + f);
             }
+            // Loop through our files once more
+            // then on our current indexed file
+            // Loop through our created extensions to
+            // check to see if the extension matches
+            // with an extension directory, and move it there
             foreach(var f in files)
             {
-                foreach(var _f in folders)
+                if (Sorter.ignoreFiles.Contains(Path.GetFileName(f).ToLower()) || Sorter.ignoreExtensions.Contains(Path.GetExtension(f).ToLower()))
+                    continue;
+                foreach (var _f in folders)
                 {
                     if(Path.GetExtension(f).Replace(".", "").Trim() == _f)
                     {
@@ -76,7 +157,28 @@ namespace DesktopSorter
                     }
                 }
             }
-            return new List<string>(files);
+            #endregion
+
+            #region Public Desktop Compression Logic
+            string[] files2 = Directory.GetFiles(Sorter.desktopPublicPath);
+            // Loop through all of our files
+            // in the Public Desktop Directory,
+            // create directories and move
+            // the file accordingly
+            foreach(var f in files2)
+            {
+                if (Sorter.ignoreFiles.Contains(Path.GetFileName(f).ToLower()) || Sorter.ignoreExtensions.Contains(Path.GetExtension(f).ToLower()))
+                    continue;
+                string file_name = Path.GetFileName(f);
+                string file_extension = Path.GetExtension(f).Replace(".", "").Trim();
+                Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/" + file_extension);
+                File.Move(f, Sorter.desktopPath + "/DesktopSorter/_PublicDesktop/" + file_extension + "/" + file_name);
+            }
+            #endregion
+
+            List<string> files_return = new List<string>(files);
+            files_return.AddRange(files2);
+            return files_return;
         }
     }
 }
