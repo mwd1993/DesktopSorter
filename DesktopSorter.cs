@@ -86,8 +86,9 @@ namespace DesktopSorter
                             Console.WriteLine("The files have been moved to a Folder on your Desktop named,\n\"_PublicDesktop\", since they are essentially stuck in limbo.\n");
                             Console.WriteLine("############################################################################################\\n");
                             publicAccessError = true;
+                            break;
                         }
-                        break;
+                        
                     }
                     if (publicAccessError)
                         break;
