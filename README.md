@@ -17,4 +17,6 @@ DesktopSorter.exe "decompress"
 1. Shortcuts aren't being moved to the compression path, needs further looking into.
 ```
 
+# Image Example:
+### (After running "compression")  
  ![](DesktopSorter.png)
