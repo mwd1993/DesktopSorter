@@ -1,19 +1,23 @@
 # DesktopSorter
-C# Application, when ran, sorts your Desktop files by their extension name, into their own folders, in a folder named DesktopSorter  
+C# Application to sort and clean your Desktop by doing the following:  
 
+1. Groups all files, by extension-type, and moves them to a folder named by said type.
+2. Then, moves any folders less than 1 Gig in size, to a main folder named, "\_DesktopSorterFolders".  
+3. Lastly, it stores all of these new folders and files, into a Main folder on your desktop named, "DesktopSorter".  
+4. You can then run this program 'backwards' which places everything back onto the Desktop.    
+##### ** USE AT YOUR OWN RISK **
+##### ** Recommended to run CMD as Administrator **
+##### Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) & Run from CMD Line:  
 
-### ** Recommended to run CMD as Administrator **
-
-
-## Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) & Run from CMD Line:  
+# Usage
   
 #### (this sorts all of your desktop items)
 ```
 DesktopSorter.exe compress
 ```  
-#### (this sorts all of your desktop items, ignoring extensions seperated by ",")
+#### (this sorts all of your desktop items, ignoring extensions (or folders) seperated by ",")
 ```
-DesktopSorter.exe compress .exe,.ini,.mp3,.wav,.mp4
+DesktopSorter.exe compress .exe,.ini,folders,.mp3,.wav,.mp4
 ```  
 #### (this extracts all of your compressed items back to the desktop)  
 ```
