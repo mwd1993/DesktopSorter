@@ -4,7 +4,7 @@ using System.IO;
 
 namespace DesktopSorter
 {
-    class Sorter
+    public static class Sorter
     {
         public static string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         public static string desktopPublicPath = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
@@ -14,10 +14,10 @@ namespace DesktopSorter
             "desktopsorter.exe",
             "desktop.ini"
         };
-    
+
         public static void Main(string[] args)
         {
-            if(args.Length >= 1)
+            if (args.Length >= 1)
             {
                 // Extensions to ignore
                 // were provided by the user
@@ -29,21 +29,31 @@ namespace DesktopSorter
                     List<string> ignore = new List<string>(ignoreExt.Split(","));
                     Sorter.ignoreExtensions = ignore;
                 }
-                switch(args[0].ToLower())
+
+                #region Command Line Switch Logic
+                switch (args[0].ToLower())
                 {
+                    case "test":
+                        {
+                            Sorter.compressFolders();
+                            break;
+                        }
                     case "compress":
                         {
                             List<string> files = Sorter.compressFiles();
-                            Console.WriteLine("Compressed " + files.Count + " files");
+                            List<string> folders = Sorter.compressFolders();
+                            Console.WriteLine("Compressed " + files.Count + " Files and " + folders.Count + " Folders");
                             break;
                         }
                     case "decompress":
                         {
-                            List<string> files = Sorter.decompressFiles();
-                            Console.WriteLine("Decompressed " + files.Count + " files");
+                            List<string> folders = Sorter.decompressFolders();
+                            List<string> files = Sorter.decompressFiles(); // method deletes DesktopSorter's Desktop Folder, so call it last
+                            Console.WriteLine("Decompressed " + files.Count + " Files and " + folders.Count + " Folders");
                             break;
                         }
                 }
+                #endregion
             }
         }
 
@@ -88,7 +98,7 @@ namespace DesktopSorter
                             publicAccessError = true;
                             break;
                         }
-                        
+
                     }
                     if (publicAccessError)
                         break;
@@ -162,7 +172,7 @@ namespace DesktopSorter
             }
             // Create each extension directory 
             // inside of our DesktopSorter folder
-            foreach(var f in folders)
+            foreach (var f in folders)
             {
                 Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter/" + f);
             }
@@ -171,13 +181,13 @@ namespace DesktopSorter
             // Loop through our created extensions to
             // check to see if the extension matches
             // with an extension directory, and move it there
-            foreach(var f in files)
+            foreach (var f in files)
             {
                 if (Sorter.ignoreFiles.Contains(Path.GetFileName(f).ToLower()) || Sorter.ignoreExtensions.Contains(Path.GetExtension(f).ToLower()))
                     continue;
                 foreach (var _f in folders)
                 {
-                    if(Path.GetExtension(f).Replace(".", "").Trim() == _f)
+                    if (Path.GetExtension(f).Replace(".", "").Trim() == _f)
                     {
                         File.Move(f, Sorter.desktopPath + "/DesktopSorter/" + _f + "/" + Path.GetFileName(f));
                         break;
@@ -192,7 +202,7 @@ namespace DesktopSorter
             // in the Public Desktop Directory,
             // create directories and move
             // the file accordingly
-            foreach(var f in files2)
+            foreach (var f in files2)
             {
                 if (Sorter.ignoreFiles.Contains(Path.GetFileName(f).ToLower()) || Sorter.ignoreExtensions.Contains(Path.GetExtension(f).ToLower()))
                     continue;
@@ -203,6 +213,7 @@ namespace DesktopSorter
             }
             #endregion
 
+            #region Public Desktop Access denied folder check
             if (Directory.Exists(Sorter.desktopPath + "/_PublicDesktop/"))
             {
                 // Just to make sure..
@@ -210,7 +221,7 @@ namespace DesktopSorter
                 {
                     string[] pd_folders = Directory.GetDirectories(Sorter.desktopPath + "/_PublicDesktop/");
                     bool pd_fail = false;
-                    foreach(var pd_f in pd_folders)
+                    foreach (var pd_f in pd_folders)
                     {
                         try
                         {
@@ -226,10 +237,107 @@ namespace DesktopSorter
                         Directory.Delete(Sorter.desktopPath + "/_PublicDesktop");
                 }
             }
+            #endregion
 
             List<string> files_return = new List<string>(files);
             files_return.AddRange(files2);
             return files_return;
+        }
+
+        public static List<string> compressFolders()
+        {
+            if (ignoreExtensions.Contains("folders"))
+            {
+                return new List<string>();
+            }
+
+            #region Variable Initializing
+            List<string> foldersCompressed = new List<string>();
+            List<string> foldersIgnored = new List<string>();
+            List<string> foldersToIgnore = new List<string>() { "desktopsorter", "_publicdesktop" };
+            string[] dirs = Directory.GetDirectories(Sorter.desktopPath);
+            string[] foldersToBig = new string[]{ "gb","tb","pb","eb"};
+            #endregion
+
+            #region Folder Compression Logic
+            foreach (var d in dirs)
+            {
+                if (foldersToIgnore.Contains(Path.GetFileName(d).ToLower()))
+                    continue;
+                float size = Sorter.directorySize(d);
+                string sizeGB = Sorter.bytesToString((long)size);
+                bool folderToBig = false;
+                foreach(var ftb in foldersToBig)
+                {
+                    if (sizeGB.ToLower().Contains(ftb))
+                    {
+                        folderToBig = true;
+                        break;
+                    }
+                }
+                if (folderToBig)
+                {
+                    foldersIgnored.Add(d);
+                    continue;
+                }
+                foldersCompressed.Add(d);
+            }
+
+            if(foldersCompressed.Count > 0)
+            {
+                if (Directory.Exists(Sorter.desktopPath + "/DesktopSorter/"))
+                {
+                    if(!Directory.Exists(Sorter.desktopPath + "/DesktopSorter/_DesktopSorterFolders/"))
+                        Directory.CreateDirectory(Sorter.desktopPath + "/DesktopSorter/_DesktopSorterFolders/");
+                    foreach(var f in foldersCompressed)
+                    {
+                        Directory.Move(f, Sorter.desktopPath + "/DesktopSorter/_DesktopSorterFolders/" + Path.GetFileName(f));
+                    }
+                }
+            }
+            #endregion
+
+            return foldersCompressed;
+        }
+
+        public static List<string> decompressFolders()
+        {
+            List<string> foldersDecompressed = new List<string>();
+            string[] folders = Directory.GetDirectories(Sorter.desktopPath + "/DesktopSorter/_DesktopSorterFolders/");
+            foreach(var f in folders)
+            {
+                Directory.Move(f, Sorter.desktopPath + "/" + Path.GetFileName(f));
+                foldersDecompressed.Add(f);
+            }
+            return foldersDecompressed;
+        }
+
+        public static float directorySize(string directory, bool inGigabytes = true)
+        {
+            float size = 0;
+            DirectoryInfo d = new DirectoryInfo(directory);
+            FileInfo[] fis = d.GetFiles();
+            DirectoryInfo[] dis = d.GetDirectories();
+            foreach (FileInfo fi in fis)
+                size += fi.Length;
+            foreach (DirectoryInfo di in dis)
+                size += directorySize(di.FullName, inGigabytes: false);
+            return size;
+        }
+
+        static String bytesToString(long byteCount)
+        {
+            string[] suffixes = { 
+                "B", "KB", "MB", 
+                "GB", "TB", "PB", 
+                "EB" 
+            };
+            if (byteCount == 0)
+                return "0" + suffixes[0];
+            long bytes = Math.Abs(byteCount);
+            int place = Convert.ToInt32(Math.Floor(Math.Log(bytes, 1024)));
+            double num = Math.Round(bytes / Math.Pow(1024, place), 1);
+            return (Math.Sign(byteCount) * num).ToString() + suffixes[place];
         }
     }
 }
