@@ -38,4 +38,4 @@ None
 ```  
 # Image Example:
 ### (After running "compression")  
- ![](DesktopSorter.png)
+ ![](IMG_DesktopSorter.png)
