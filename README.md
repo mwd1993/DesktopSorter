@@ -33,8 +33,8 @@ None
 # Fixed Issues:  
 ```
 1. Shortcuts or some other weird extension type, is not being moved to the compression path, needs further looking into.
-    (FIX) The problem was actually some desktop icons were in the Public Desktop location (different from default desktop location)
-    & to move files back into that location, requires running CMD as administrator.
+   - FIX: The problem was actually some desktop icons were in the Public Desktop location (different from default desktop location)
+          & to move files back into that location, requires running CMD as administrator.
 ```  
 # Image Example:
 ### (After running "compression")  
