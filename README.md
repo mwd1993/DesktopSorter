@@ -1,7 +1,7 @@
 # DesktopSorter
 C# Application to sort and clean your Desktop by doing the following:  
 
-1. Groups all files, by extension-type, then moves the files to a folder named by said type.
+1. Groups all files, by extension-type, then moves the files to a folder named by said type (jpg, mp3, exe, etc).
 2. Then, moves any folders less than 1 Gig in size, to a main folder named, "\_DesktopSorterFolders".  
 3. Lastly, it stores all of these new folders and files, into a Main folder on your desktop named, "DesktopSorter".  
 4. You can then run this program 'backwards' which places everything back onto the Desktop.    
