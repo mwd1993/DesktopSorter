@@ -6,14 +6,14 @@ Desktop Application written in C# that sorts and cleans your Desktop by doing th
 3. Lastly, it stores all of these new folders and files, into a Main folder on your desktop named, "DesktopSorter".  
 4. You can then run this program 'backwards' which places everything back onto the Desktop.    
 ##### ** USE AT YOUR OWN RISK **
-##### ** Recommended to run CMD as Administrator, not required though **
-##### Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) & Run from CMD Line:  
+##### Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) 
 
 # Version 0.0.4 and higher provides an Interface
 
 ![](DesktopSorterInterface.png)
 
-# Usage (0.0.3 and below) uses CMD line
+# Usage (0.0.3 and below) uses CMD line  
+##### ** Recommended to run CMD as Administrator, not required though **
   
 #### (this sorts all of your desktop items)
 ```
