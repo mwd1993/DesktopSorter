@@ -7,17 +7,36 @@ namespace DesktopSorter
 {
     class DesktopSorterUtilities
     {
+        public static float desktopSize()
+        {
+            string[] files = Directory.GetFiles(DesktopSorterVariables.desktopPath);
+            float desktopSize = 0;
+            foreach(var f in files)
+            {
+                FileInfo fileInfo = new FileInfo(f);
+                desktopSize += fileInfo.Length;
+            }
+            return desktopSize;
+        }
+
         public static float directorySize(string directory, bool inGigabytes = true)
         {
-            float size = 0;
-            DirectoryInfo d = new DirectoryInfo(directory);
-            FileInfo[] fis = d.GetFiles();
-            DirectoryInfo[] dis = d.GetDirectories();
-            foreach (FileInfo fi in fis)
-                size += fi.Length;
-            foreach (DirectoryInfo di in dis)
-                size += directorySize(di.FullName, inGigabytes: false);
-            return size;
+            try
+            {
+                float size = 0;
+                DirectoryInfo d = new DirectoryInfo(directory);
+                FileInfo[] fis = d.GetFiles();
+                DirectoryInfo[] dis = d.GetDirectories();
+                foreach (FileInfo fi in fis)
+                    size += fi.Length;
+                foreach (DirectoryInfo di in dis)
+                    size += directorySize(di.FullName, inGigabytes: false);
+                return size;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public static String bytesToString(long byteCount)

@@ -139,7 +139,15 @@ namespace DesktopSorter
                 {
                     if (Path.GetExtension(f).Replace(".", "").Trim() == _f)
                     {
-                        File.Move(f, DesktopSorterVariables.desktopPath + "/DesktopSorter/" + _f + "/" + Path.GetFileName(f));
+                        try
+                        {
+                            File.Move(f, DesktopSorterVariables.desktopPath + "/DesktopSorter/" + _f + "/" + Path.GetFileName(f));
+                        }
+                        catch
+                        {
+                            // file/folder in use, so we can't move it
+                        }
+                        
                         break;
                     }
                 }
@@ -160,7 +168,14 @@ namespace DesktopSorter
                 string file_name = Path.GetFileName(f);
                 string file_extension = Path.GetExtension(f).Replace(".", "").Trim();
                 Directory.CreateDirectory(DesktopSorterVariables.desktopPath + "/DesktopSorter/_PublicDesktop/" + file_extension);
-                File.Move(f, DesktopSorterVariables.desktopPath + "/DesktopSorter/_PublicDesktop/" + file_extension + "/" + file_name);
+                try
+                {
+                    File.Move(f, DesktopSorterVariables.desktopPath + "/DesktopSorter/_PublicDesktop/" + file_extension + "/" + file_name);
+                }
+                catch
+                {
+                    // file in use
+                }
             }
             #endregion
 

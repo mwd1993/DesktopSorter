@@ -6,7 +6,7 @@ namespace DesktopSorter
 {
     public static class DesktopSorter
     {
-        public static void Main(string[] args)
+        public static void secondaryMain(string[] args)
         {
             if (args.Length >= 1)
             {
@@ -26,7 +26,7 @@ namespace DesktopSorter
                 {
                     case "test":
                         {
-                            DesktopSorterFolders.compressFolders();
+                            // Nothing for now
                             break;
                         }
                     case "compress":

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace DesktopSorter
 {
@@ -73,13 +71,28 @@ namespace DesktopSorter
         public static List<string> decompressFolders()
         {
             List<string> foldersDecompressed = new List<string>();
-            string[] folders = Directory.GetDirectories(DesktopSorterVariables.desktopPath + "/DesktopSorter/_DesktopSorterFolders/");\
+            string[] folders = new string[] { };
+            try
+            {
+                folders = Directory.GetDirectories(DesktopSorterVariables.desktopPath + "/DesktopSorter/_DesktopSorterFolders/");
+            }
+            catch
+            {
+                return foldersDecompressed;
+            }
             // Loop through each directory
             // in our compression directory
             foreach (var f in folders)
             {
                 // Move the file back to the desktop
-                Directory.Move(f, DesktopSorterVariables.desktopPath + "/" + Path.GetFileName(f));
+                try
+                {
+                    Directory.Move(f, DesktopSorterVariables.desktopPath + "/" + Path.GetFileName(f));
+                }
+                catch
+                {
+                    // folder has something in use by user, cannot move
+                }
                 foldersDecompressed.Add(f);
             }
             return foldersDecompressed;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DesktopSorter
 {
@@ -30,7 +29,8 @@ namespace DesktopSorter
         public static List<string> ignoreFiles = new List<string>()
         {
             "desktopsorter.exe",
-            "desktop.ini"
+            "desktop.ini",
+            "desktopSorterWF.exe"
         };
         public static List<string> errorAccessDenied = new List<string>()
         {
