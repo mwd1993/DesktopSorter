@@ -9,7 +9,11 @@ Desktop Application written in C# that sorts and cleans your Desktop by doing th
 ##### ** Recommended to run CMD as Administrator, not required though **
 ##### Compile yourself, or Download from [Releases](https://github.com/mwd1993/DesktopSorter/releases) & Run from CMD Line:  
 
-# Usage
+# Version 0.0.4 and higher provides an Interface
+
+![](DesktopSorterInterface.png)
+
+# Usage (0.0.3 and below) uses CMD line
   
 #### (this sorts all of your desktop items)
 ```
@@ -24,18 +28,6 @@ DesktopSorter.exe compress .exe,.ini,folders,.mp3,.wav,.mp4
 DesktopSorter.exe decompress
 ```  
 
-
-# Known Issues:  
-```
-None
-```  
-
-# Fixed Issues:  
-```
-1. Shortcuts or some other weird extension type, is not being moved to the compression path, needs further looking into.
-   - FIX: The problem was actually some desktop icons were in the Public Desktop location (different from default desktop location)
-          & to move files back into that location, requires running CMD as administrator.
-```  
 # Image Example:
 ### (After running "compression")  
  ![](IMG_DesktopSorter.PNG)
