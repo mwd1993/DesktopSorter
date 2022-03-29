@@ -1,10 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace DesktopSorter
 {
     class DesktopSorterFolders
     {
+        /// <summary>
+        /// Tries to move folders from the active desktop
+        /// to the sorting directory, ignoring folders
+        /// that are over 1gig in size
+        /// </summary>
+        /// <returns>
+        /// a List of strings of the directories that got moved
+        /// </returns>
         public static List<string> compressFolders()
         {
             if (DesktopSorterVariables.ignoreExtensions.Contains("folders"))
@@ -15,9 +24,7 @@ namespace DesktopSorter
             #region Variable Initializing
             List<string> foldersCompressed = new List<string>();
             List<string> foldersIgnored = new List<string>();
-            List<string> foldersToIgnore = new List<string>() { "desktopsorter", "_publicdesktop" };
             string[] dirs = Directory.GetDirectories(DesktopSorterVariables.desktopPath);
-            string[] foldersToBig = new string[] { "gb", "tb", "pb", "eb" };
             #endregion
 
             #region Folder Compression Logic
@@ -25,22 +32,22 @@ namespace DesktopSorter
             // on our Desktop
             foreach (var d in dirs)
             {
-                if (foldersToIgnore.Contains(Path.GetFileName(d).ToLower()))
+                if (DesktopSorterVariables.foldersToIgnore.Contains(Path.GetFileName(d).ToLower()))
                     continue;
                 float size = DesktopSorterUtilities.directorySize(d);
                 string sizeGB = DesktopSorterUtilities.bytesToString((long)size);
-                bool folderToBig = false;
+                bool folderTooBig = false;
                 // Check to see if the file
                 // is over over a gigabyte in size
-                foreach (var ftb in foldersToBig)
+                foreach (var ftb in DesktopSorterVariables.foldersTooBig)
                 {
                     if (sizeGB.ToLower().Contains(ftb))
                     {
-                        folderToBig = true;
+                        folderTooBig = true;
                         break;
                     }
                 }
-                if (folderToBig)
+                if (folderTooBig)
                 {
                     foldersIgnored.Add(d);
                     continue;
@@ -68,6 +75,11 @@ namespace DesktopSorter
             return foldersCompressed;
         }
 
+        /// <summary>
+        /// Tries to decompress the folders (containing files)
+        /// back to the active desktop
+        /// </summary>
+        /// <returns>a List of strings of the directories that got moved</returns>
         public static List<string> decompressFolders()
         {
             List<string> foldersDecompressed = new List<string>();
@@ -84,14 +96,16 @@ namespace DesktopSorter
             // in our compression directory
             foreach (var f in folders)
             {
-                // Move the file back to the desktop
+                // TODO: May need to wrap this try in a while loop
                 try
                 {
+                    // Move the file back to the desktop
                     Directory.Move(f, DesktopSorterVariables.desktopPath + "/" + Path.GetFileName(f));
                 }
                 catch
                 {
                     // folder has something in use by user, cannot move
+                    MessageBox.Show("You have a program or file running, the application is paused until it has been closed.");
                 }
                 foldersDecompressed.Add(f);
             }

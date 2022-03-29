@@ -4,8 +4,20 @@ using System.IO;
 
 namespace DesktopSorter
 {
+    /// <summary>
+    /// DesktopSorter class that handles
+    /// the logic of either compression or
+    /// the decompression
+    /// </summary>
     public static class DesktopSorter
     {
+        /// <summary>
+        /// This was our main entry point when the
+        /// program was command line only. Since
+        /// our main entry point changed to the interface
+        /// we will call this, the secondary entry point
+        /// </summary>
+        /// <param name="args"></param>
         public static void secondaryMain(string[] args)
         {
             if (args.Length >= 1)
@@ -26,7 +38,8 @@ namespace DesktopSorter
                 {
                     case "test":
                         {
-                            // Nothing for now
+                            // Nothing for now, may be used
+                            // to handle any testing we need to do.
                             break;
                         }
                     case "compress":

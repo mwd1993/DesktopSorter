@@ -5,8 +5,17 @@ using System.Text;
 
 namespace DesktopSorter
 {
+    /// <summary>
+    /// Class to handle the moving of files
+    /// from and to the desktop directory
+    /// </summary>
     class DesktopSorterFiles
     {
+        /// <summary>
+        /// Attempts to move the files from
+        /// the desktopSorter directory
+        /// </summary>
+        /// <returns>List of files decompressed</returns>
         public static List<string> decompressFiles()
         {
             #region Public Desktop Decompression Logic
@@ -26,7 +35,6 @@ namespace DesktopSorter
                     {
                         if (DesktopSorterVariables.ignoreFiles.Contains(Path.GetFileName(f).ToLower()))
                             continue;
-
                         // This try attempt will fail if the user
                         // isn't running CMD as admin and then calling
                         // this program via the terminal. If they
@@ -41,14 +49,11 @@ namespace DesktopSorter
                         }
                         catch
                         {
-                            Console.WriteLine("############################################################################################\\n");
-                            Console.WriteLine("You should run CMD as admin, as there are some files\nthat are in the Public Desktop location, which requires admin rights to move it back.\n");
-                            Console.WriteLine("The files have been moved to a Folder on your Desktop named,\n\"_PublicDesktop\", since they are essentially stuck in limbo.\n");
-                            Console.WriteLine("############################################################################################\\n");
+                            foreach(var errorline in DesktopSorterVariables.errorAccessDenied)
+                                Console.WriteLine(errorline);
                             publicAccessError = true;
                             break;
                         }
-
                     }
                     if (publicAccessError)
                         break;
@@ -101,6 +106,11 @@ namespace DesktopSorter
             return filesDecompressed;
         }
 
+        /// <summary>
+        /// Attempts to move the files to
+        /// the desktopSorter directory
+        /// </summary>
+        /// <returns>List of files compressed</returns>
         public static List<string> compressFiles()
         {
             Directory.CreateDirectory(DesktopSorterVariables.desktopPath + "/DesktopSorter");
@@ -145,15 +155,13 @@ namespace DesktopSorter
                         }
                         catch
                         {
-                            // file/folder in use, so we can't move it
+                            // file in use by the user, so we can't move it
                         }
-                        
                         break;
                     }
                 }
             }
             #endregion
-
 
             #region Public Desktop Compression Logic
             string[] files2 = Directory.GetFiles(DesktopSorterVariables.desktopPublicPath);
@@ -174,7 +182,7 @@ namespace DesktopSorter
                 }
                 catch
                 {
-                    // file in use
+                    // file in use by the user (in _PublicDesktop), so we cannot move it
                 }
             }
             #endregion
@@ -182,7 +190,7 @@ namespace DesktopSorter
             #region Public Desktop Access denied folder check
             if (Directory.Exists(DesktopSorterVariables.desktopPath + "/_PublicDesktop/"))
             {
-                // Just to make sure..
+                // Make sure the _PublicDesktop directory is valid
                 if (Directory.Exists(DesktopSorterVariables.desktopPath + "/DesktopSorter/_PublicDesktop/"))
                 {
                     string[] pd_folders = Directory.GetDirectories(DesktopSorterVariables.desktopPath + "/_PublicDesktop/");

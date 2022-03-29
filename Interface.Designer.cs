@@ -79,7 +79,6 @@ namespace DesktopSorterWF
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // label2
             // 
@@ -185,7 +184,6 @@ namespace DesktopSorterWF
             this.label3.Size = new System.Drawing.Size(208, 14);
             this.label3.TabIndex = 12;
             this.label3.Text = "Developed by Marc D | Version: 0.0.4";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // label4
             // 

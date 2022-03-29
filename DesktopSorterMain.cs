@@ -6,6 +6,10 @@ using System.Windows.Forms;
 
 namespace DesktopSorterWF
 {
+    /// <summary>
+    /// DesktopSorter class that also
+    /// handles the main entry point
+    /// </summary>
     static class DesktopSorterMain
     {
         /// <summary>
@@ -23,7 +27,6 @@ namespace DesktopSorterWF
                     if(Interface.lvLoadTimeout)
                     {
                         long currTimeMS = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                        // MessageBox.Show(currTimeMS + " - " + Interface.lvLoadLastTimeoutValue + " > " + Interface.lvLoadTimeoutValue + "?");
                         if (currTimeMS - Interface.lvLoadLastTimeoutValue > Interface.lvLoadTimeoutValue)
                         {
                             Interface.lvLoadTimeout = false;
@@ -57,12 +60,11 @@ namespace DesktopSorterWF
                                 foreach (var f in files)
                                 {
                                     var fn = Path.GetFileName(f);
-                                    if (DesktopSorterWF.Interface.filesDetected.Contains(fn))
+                                    if (Interface.filesDetected.Contains(fn))
                                         continue;
                                     var listViewItem = new ListViewItem(new string[] { fn });
                                     Interface.lv1.Items.Add(listViewItem);
                                     Interface.filesDetected.Add(fn);
-                                    // Interface.lv1L.Text = "Size: " + DesktopSorterUtilities.directorySize(DesktopSorterVariables.desktopPath);
                                     Thread getSizeOfDirectory = new Thread(new ThreadStart(delegate ()
                                     {
                                         var sizeOf = DesktopSorterUtilities.desktopSize();
@@ -71,7 +73,6 @@ namespace DesktopSorterWF
                                         {
                                             Interface.lv1L.Text = "Size: " + sizeOfFinal + " (Folders Exluded)";
                                         }));
-
                                     }));
                                     getSizeOfDirectory.Start();
                                 }
@@ -83,7 +84,8 @@ namespace DesktopSorterWF
                             {
                                 Interface.lv2.Invoke((MethodInvoker)(() =>
                                 {
-                                    // Something changed, so we can proceed to update the list view
+                                    // Something changed, so we can
+                                    // proceed to update the list view
                                     if (desktopSorterDirectories.Length != Interface.desktopSorterDirsDetected.Count)
                                     {
                                         Interface.lv2.Clear();
@@ -97,19 +99,19 @@ namespace DesktopSorterWF
                                         var listViewItem = new ListViewItem(new string[] { dn });
                                         Interface.lv2.Items.Add(listViewItem);
                                         Interface.desktopSorterDirsDetected.Add(dn);
-
                                         Thread getSizeOfDirectory = new Thread(new ThreadStart(delegate ()
                                         {
-                                            var sizeOf = Double.Parse(DesktopSorterUtilities.directorySize(DesktopSorterVariables.desktopPath + "\\DesktopSorter").ToString(), System.Globalization.NumberStyles.Float);
+                                            var sizeOf = Double.Parse(
+                                                DesktopSorterUtilities.directorySize(DesktopSorterVariables.desktopPath + "\\DesktopSorter").ToString(),
+                                                System.Globalization.NumberStyles.Float
+                                            );
                                             var sizeOfFinal = DesktopSorterUtilities.bytesToString((long)sizeOf);
                                             Interface.lv2L.Invoke((MethodInvoker)(() =>
                                             {
                                                 Interface.lv2L.Text = "Size: " + sizeOfFinal;
                                             }));
-                                            
                                         }));
                                         getSizeOfDirectory.Start();
-
                                     }
                                 }));
                             }
@@ -127,18 +129,12 @@ namespace DesktopSorterWF
                         }
                     }
                 }
-
             }));
-
-            // Start our thread
             thread.Start();
-
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Interface());
-
         }
-
     }
 }

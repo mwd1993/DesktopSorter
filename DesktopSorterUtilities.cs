@@ -5,8 +5,16 @@ using System.Text;
 
 namespace DesktopSorter
 {
+    /// <summary>
+    /// Various misc. methods for 
+    /// the desktopSorter
+    /// </summary>
     class DesktopSorterUtilities
     {
+        /// <summary>
+        /// Gets the current desktop size in bytes
+        /// </summary>
+        /// <returns>float bytes</returns>
         public static float desktopSize()
         {
             string[] files = Directory.GetFiles(DesktopSorterVariables.desktopPath);
@@ -19,6 +27,13 @@ namespace DesktopSorter
             return desktopSize;
         }
 
+        /// <summary>
+        /// Gets the current directory size
+        /// provided, and returns the total bytes
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <param name="inGigabytes"></param>
+        /// <returns>float bytes</returns>
         public static float directorySize(string directory, bool inGigabytes = true)
         {
             try
@@ -39,6 +54,11 @@ namespace DesktopSorter
             }
         }
 
+        /// <summary>
+        /// Converts bytes to a human-readable form
+        /// </summary>
+        /// <param name="byteCount"></param>
+        /// <returns>string representation</returns>
         public static String bytesToString(long byteCount)
         {
             string[] suffixes = {
